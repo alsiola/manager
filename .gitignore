@@ -1,0 +1,8 @@
+node_modules
+client/lib
+server/lib
+server/ormconfig.json
+server/ormconfig.*.json
+*.pcks8
+*.pem
+*.cer
