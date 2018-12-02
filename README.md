@@ -36,6 +36,12 @@ Create the file `server/ormconfig.json` containing connection information, e.g.
 }
 ```
 
+Create an env file in `server/.env` if you want to use apollo engine, with the content:
+
+```
+ENGINE_API_KEY=<YOUR API KEY>
+```
+
 Now run the backend:
 
 ```

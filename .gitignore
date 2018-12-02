@@ -6,3 +6,4 @@ server/ormconfig.*.json
 *.pcks8
 *.pem
 *.cer
+.env
