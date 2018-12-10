@@ -19,7 +19,7 @@ createConnection().then(connection => {
         }
     });
 
-    server.listen().then(() => {
+    server.listen(4000).then(() => {
         console.log(`🚀  Server ready at http://localhost:4000`);
     });
 });

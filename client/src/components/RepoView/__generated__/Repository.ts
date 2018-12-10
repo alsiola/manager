@@ -20,6 +20,7 @@ export interface Repository_repository_latestRelease {
 
 export interface Repository_repository {
   __typename: "Repository";
+  id: number;
   name: string;
   currentBranch: string;
   branches: string[];
@@ -32,5 +33,5 @@ export interface Repository {
 }
 
 export interface RepositoryVariables {
-  name: string;
+  id: number;
 }

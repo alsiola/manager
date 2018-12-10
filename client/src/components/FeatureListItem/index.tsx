@@ -1,64 +1,20 @@
 import React from "react";
-import gql from "graphql-tag";
 import { Query } from "react-apollo";
-import { Item, Button } from "semantic-ui-react";
-import {
-    FeatureVariables,
-    Feature as FeatureResponse
-} from "./__generated__/Feature";
-
-export const GET_FEATURE = gql`
-    query Feature($id: Int!) {
-        feature(id: $id) {
-            id
-            name
-            branches {
-                id
-                name
-                repository {
-                    name
-                }
-            }
-        }
-    }
-`;
+import { List } from "semantic-ui-react";
 
 interface FeatureProps {
     onSelected: () => void;
+    name: string;
 }
 
-export const FeatureListItem: React.SFC<FeatureVariables & FeatureProps> = ({
-    id,
+export const FeatureListItem: React.SFC<FeatureProps> = ({
+    name,
     onSelected
 }) => (
-    <Query<FeatureResponse, FeatureVariables>
-        query={GET_FEATURE}
-        variables={{ id }}
-    >
-        {({ loading, error, data }) => {
-            if (error) return `Error! ${error.message}`;
-            if (loading || !data) return "Loading...";
-
-            if (!data.feature) return "Repository not found";
-
-            const {
-                feature: { name, branches }
-            } = data;
-
-            return (
-                <Item>
-                    <Item.Content>
-                        <Item.Header>{name}</Item.Header>
-                        {branches.map(
-                            ({ name, repository: { name: repoName } }) => (
-                                <Item.Extra key={`${repoName}-${name}`}>
-                                    {repoName}: {name}
-                                </Item.Extra>
-                            )
-                        )}
-                    </Item.Content>
-                </Item>
-            );
-        }}
-    </Query>
+    <List.Item onClick={onSelected}>
+        <List.Icon name="tasks" size="large" verticalAlign="middle" />
+        <List.Content>
+            <List.Header as="span">{name}</List.Header>
+        </List.Content>
+    </List.Item>
 );

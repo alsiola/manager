@@ -1,9 +1,26 @@
-import { IFieldResolver } from "graphql-tools";
-import * as model from "../../../model";
-import { Ctx } from "../../..";
+import { git } from "../../../model";
+import { Repository } from "../../../entities/Repository";
+import { Resolver } from "../../resolver";
+import { SchemaSection } from "../../group-schema";
+import { gql } from "apollo-server";
 
-export const currentBranch: IFieldResolver<model.RepoObject, Ctx> = ({
-    repo
-}) => {
-    return model.getCurrentBranchname(repo);
+const _currentBranch: Resolver<Repository> = ({ path }) => {
+    return git.getCurrentBranchname(path);
+};
+
+export const typeDef = gql`
+    extend type Repository {
+        currentBranch: String!
+    }
+`;
+
+export const resolvers = {
+    Repository: {
+        currentBranch: _currentBranch
+    }
+};
+
+export const currentBranch: SchemaSection = {
+    typeDef,
+    resolvers
 };

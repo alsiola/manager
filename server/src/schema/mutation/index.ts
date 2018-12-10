@@ -1,8 +1,10 @@
-import * as checkoutBranch from "./checkoutBranch";
-import * as createFeature from "./createFeature";
-import { makeExecutableSchema } from "graphql-tools";
 import { gql } from "apollo-server";
 import { groupSchema } from "../group-schema";
+import * as checkoutBranch from "./checkoutBranch";
+import * as checkoutBranches from "./checkoutBranches";
+import * as createFeature from "./createFeature";
+import * as fetch from "./fetch";
+import * as pull from "./pull";
 
 const typeDef = gql`
     type Mutation {
@@ -13,5 +15,8 @@ const typeDef = gql`
 export const mutationSchema = groupSchema(
     { typeDef },
     checkoutBranch,
-    createFeature
+    checkoutBranches,
+    createFeature,
+    fetch,
+    pull
 );

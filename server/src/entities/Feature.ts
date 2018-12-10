@@ -9,9 +9,10 @@ import { FeatureBranch } from "./FeatureBranch";
 
 @Entity()
 export class Feature {
-    static create({ name }: Pick<Feature, "name">) {
+    static create({ name, issueCode }: Pick<Feature, "name" | "issueCode">) {
         const feature = new Feature();
         feature.name = name;
+        feature.issueCode = issueCode;
         return feature;
     }
 
@@ -20,6 +21,9 @@ export class Feature {
 
     @Column()
     name!: string;
+
+    @Column()
+    issueCode!: string;
 
     @OneToMany(_ => FeatureBranch, branch => branch.feature, { eager: true })
     @JoinTable()

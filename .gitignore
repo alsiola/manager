@@ -7,3 +7,4 @@ server/ormconfig.*.json
 *.pem
 *.cer
 .env
+pg-data

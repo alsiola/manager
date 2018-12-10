@@ -1,14 +1,17 @@
-import "reflect-metadata";
 import { getManager, Connection } from "typeorm";
 import { Feature, FeatureBranch } from "../../entities";
 import { CreateFeatureArgs } from "../../schema/mutation/createFeature";
+import { Repository } from "../../entities/Repository";
 
 export const createFeature = async ({
     name,
+    issueCode,
     featureBranches
-}: CreateFeatureArgs) => {
+}: CreateFeatureArgs<Repository>) => {
     return getManager().transaction(async transaction => {
-        const feature = await transaction.save(Feature.create({ name }));
+        const feature = await transaction.save(
+            Feature.create({ name, issueCode })
+        );
 
         await transaction.save(
             featureBranches.map(({ name, repository }) =>

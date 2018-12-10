@@ -2,21 +2,21 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: CheckoutBranch
+// GraphQL query operation: Repository
 // ====================================================
 
-export interface CheckoutBranch_checkoutBranch {
+export interface Repository_repository {
   __typename: "Repository";
+  id: number;
   name: string;
   currentBranch: string;
   branches: string[];
 }
 
-export interface CheckoutBranch {
-  checkoutBranch: CheckoutBranch_checkoutBranch | null;
+export interface Repository {
+  repository: Repository_repository | null;
 }
 
-export interface CheckoutBranchVariables {
-  repo: string;
-  branch: string;
+export interface RepositoryVariables {
+  id: number;
 }

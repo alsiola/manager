@@ -1,5 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    ManyToOne,
+    OneToOne,
+    JoinColumn
+} from "typeorm";
 import { Feature } from "./Feature";
+import { Repository } from "./Repository";
 
 @Entity()
 export class FeatureBranch {
@@ -19,11 +27,11 @@ export class FeatureBranch {
     id!: number;
 
     @Column()
-    repository!: string;
-
-    @Column()
     name!: string;
 
     @ManyToOne(_ => Feature, feature => feature.branches)
     feature!: Feature;
+
+    @ManyToOne(() => Repository, repo => repo.featureBranches, { eager: true })
+    repository!: Repository;
 }

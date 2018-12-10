@@ -8,6 +8,7 @@
 export interface Features_features {
   __typename: "Feature";
   id: number;
+  name: string;
 }
 
 export interface Features {

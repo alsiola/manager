@@ -1,23 +1,33 @@
 import * as model from "../../../model";
 import { gql, IFieldResolver } from "apollo-server";
-import { SchemaSection } from "../../group-schema";
-import { branches } from "./branches";
+import { groupSchema } from "../../group-schema";
 import { commits } from "./commits";
 import { currentBranch } from "./currentBranch";
 import { latestCommit } from "./latestCommit";
 import { latestRelease } from "./latestRelease";
-import { RepoObject } from "../../../model";
+import { Ctx } from "../../..";
+import { branches } from "./branches";
 
-export const _repository: IFieldResolver<{}, {}, { name: string }> = (
+export const _repository: IFieldResolver<{}, Ctx, { id: number }> = (
     _,
-    { name }
+    { id },
+    { connection }
 ) => {
-    return model.getRepository({ name }).catch(() => null);
+    return model.repository.getRepository(connection, { id });
+};
+
+const _repositories: IFieldResolver<{}, Ctx> = async (
+    _,
+    __,
+    { connection }
+) => {
+    return model.repository.getRepositories(connection);
 };
 
 export const typeDef = gql`
     extend type Query {
-        repository(name: String!): Repository
+        repository(id: Int!): Repository
+        repositories: [Repository!]!
     }
 
     type Commit {
@@ -26,35 +36,27 @@ export const typeDef = gql`
         message: String!
     }
 
-    type Release {
-        version: String!
-        isMerged: Boolean!
-    }
-
     type Repository {
-        latestCommit: Commit
-        latestRelease: Release
-        commits(count: Int!): [Commit!]!
-        currentBranch: String!
+        id: Int!
         name: String!
-        branches: [String!]!
     }
 `;
 
 export const resolvers = {
     Query: {
-        repository: _repository
-    },
-    Repository: {
-        branches,
-        commits,
-        currentBranch,
-        latestCommit,
-        latestRelease
+        repository: _repository,
+        repositories: _repositories
     }
 };
 
-export const repository: SchemaSection = {
-    typeDef,
-    resolvers
-};
+export const repository = groupSchema(
+    {
+        typeDef,
+        resolvers
+    },
+    branches,
+    commits,
+    currentBranch,
+    latestCommit,
+    latestRelease
+);

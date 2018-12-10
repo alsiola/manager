@@ -2,36 +2,49 @@ import gql from "graphql-tag";
 import { Query } from "react-apollo";
 import React from "react";
 import { Features } from "./__generated__/Features";
-import { RepoListItem } from "../RepoListItem";
-import { Item, Header } from "semantic-ui-react";
+import { Header, Button, List } from "semantic-ui-react";
 import { FeatureListItem } from "../FeatureListItem";
+import { Link } from "@reach/router";
 
-const GET_FEATURES = gql`
+export const GET_FEATURES = gql`
     query Features {
         features {
             id
+            name
         }
     }
 `;
 
-export const FeatureList: React.SFC<{}> = () => (
+interface FeatureListProps {
+    setFeature: (args: { title: string; id: number }) => void;
+}
+
+export const FeatureList: React.SFC<FeatureListProps> = ({ setFeature }) => (
     <>
         <Header>Features</Header>
+        <Link to="/feature/create">
+            <Button>Add Feature</Button>
+        </Link>
+        <Link to="/connect/jira">
+            <Button>Connext to JIRA</Button>
+        </Link>
         <Query<Features> query={GET_FEATURES}>
             {({ loading, error, data }) => {
                 if (error) return `Error! ${error.message}`;
                 if (loading || !data) return "Loading...";
 
                 return (
-                    <Item.Group divided>
-                        {data.features.map(({ id }) => (
+                    <List relaxed divided>
+                        {data.features.map(({ id, name }) => (
                             <FeatureListItem
                                 key={id}
-                                onSelected={console.log}
-                                id={id}
+                                onSelected={() =>
+                                    setFeature({ id, title: name })
+                                }
+                                name={name}
                             />
                         ))}
-                    </Item.Group>
+                    </List>
                 );
             }}
         </Query>

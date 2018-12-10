@@ -7,7 +7,9 @@
 
 export interface Repositories_repositories {
   __typename: "Repository";
+  id: number;
   name: string;
+  branches: string[];
 }
 
 export interface Repositories {

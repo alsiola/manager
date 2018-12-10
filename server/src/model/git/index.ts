@@ -1,18 +1,14 @@
 import git, { Repository, Reference } from "nodegit";
-import * as path from "path";
 import R from "ramda";
 import { HistoryEventEmitter, Commit } from "nodegit/commit";
 
-const SERVICES = ["organization-service", "survey-service"];
-
-const getServicePath = (name: string) => {
-    return path.resolve("..", "..", name);
+const fork = <T, U, V, W>(
+    f1: (a: T) => U,
+    f2: (a: T) => V,
+    c: (a: U, b: V) => W
+) => (a: T): W => {
+    return c(f1(a), f2(a));
 };
-
-export interface RepoObject {
-    name: string;
-    repo: Repository;
-}
 
 const getCurrentBranch = (repo: Repository) => repo.getCurrentBranch();
 
@@ -26,13 +22,19 @@ const getCommit = (commit: Commit) => ({
 });
 
 export const getLatestCommit = R.pipe(
-    (repo: Repository) =>
-        repo.getCurrentBranch().then(branch => ({ repo, branch })),
+    R.pipeP(
+        git.Repository.open,
+        (repo: Repository) =>
+            repo.getCurrentBranch().then(branch => ({ repo, branch }))
+    ),
     resolve(({ repo, branch }) => repo.getBranchCommit(branch).then(getCommit))
 );
 
 export const getCurrentBranchname = R.pipe(
-    getCurrentBranch,
+    R.pipeP(
+        git.Repository.open,
+        getCurrentBranch
+    ),
     resolve(branch => branch.shorthand())
 );
 
@@ -63,16 +65,25 @@ const getRepoReferences = R.pipeP(
     ({ repo, refs }) => Promise.all(refs.map(ref => repo.getReference(ref)))
 );
 
-export const getBranchHistory = ({ count }: { count: number }) =>
+export const getBranchHistory = ({
+    count,
+    path
+}: {
+    count: number;
+    path: string;
+}) =>
     R.pipeP(
-        (repo: Repository) =>
-            repo.getCurrentBranch().then(branch => ({ repo, branch })),
-        ({ repo, branch }) => repo.getBranchCommit(branch),
+        git.Repository.open,
+        repo =>
+            repo
+                .getCurrentBranch()
+                .then(branch => repo.getBranchCommit(branch)),
         commit => aggregateHistory(count, commit.history()),
         commits => Promise.all(commits.map(getCommit)).catch(console.error)
-    );
+    )(path);
 
 export const getLatestRelease = R.pipeP(
+    git.Repository.open,
     (repo: Repository) =>
         getRepoReferences(repo).then(refs => ({ refs, repo })),
     ({ refs, repo }) =>
@@ -91,14 +102,17 @@ export const getLatestRelease = R.pipeP(
         const release = ref.target();
         const mergeBase = await git.Merge.base(repo, release, master);
         return {
-            version: ref.shorthand().substr("release/".length),
+            version: ref.shorthand(),
             isMerged: mergeBase.tostrS() === release.tostrS()
         };
     }
 );
 
 export const getBranches = R.pipe(
-    getRepoReferences,
+    R.pipeP(
+        git.Repository.open,
+        getRepoReferences
+    ),
     resolve(refs =>
         refs
             .filter(ref => ref.isBranch() && !ref.isRemote())
@@ -106,36 +120,41 @@ export const getBranches = R.pipe(
     )
 );
 
-export const getRepository = ({ name }: { name: string }) =>
-    R.pipe(
-        getServicePath,
-        git.Repository.open
-    )(name).then(repo => ({ name, repo }));
-
-export const getRepositories = async () =>
-    R.zip(
-        await Promise.all(
-            SERVICES.map(
-                R.pipe(
-                    getServicePath,
-                    git.Repository.open
-                )
-            )
-        ),
-        SERVICES
-    ).map(([repo, name]) => ({ name, repo }));
-
 export const checkoutBranch = ({
-    repo,
+    path,
     branch
 }: {
-    repo: string;
+    path: string;
     branch: string;
 }) => {
-    return R.pipe(
-        getServicePath,
+    return R.pipeP(
         git.Repository.open,
-        resolve(repo => repo.checkoutBranch(branch)),
-        resolve(() => getRepository({ name: repo }))
-    )(repo);
+        repo => repo.checkoutBranch(branch)
+    )(path);
 };
+
+export const fetch = R.pipeP(
+    git.Repository.open,
+    async repo => {
+        await repo.fetch("origin", {
+            callbacks: {
+                credentials() {
+                    return git.Cred.userpassPlaintextNew(
+                        process.env.REMOTE_USER as string,
+                        process.env.REMOTE_PASS as string
+                    );
+                }
+            }
+        });
+        return repo;
+    }
+);
+
+export const merge = ({ branch }: { branch: string }) => (repo: Repository) =>
+    repo.mergeBranches(branch, `origin/${branch}`);
+
+export const pull = ({ path, branch }: { path: string; branch: string }) =>
+    R.pipeP(
+        fetch,
+        merge({ branch })
+    )(path);

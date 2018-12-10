@@ -1,9 +1,8 @@
 import { feature } from "./feature";
-import { features } from "./features";
-import { repositories } from "./repositories";
 import { repository } from "./repository";
 import { gql } from "apollo-server";
 import { groupSchema } from "../group-schema";
+import { jira } from "./jira";
 
 const baseSchema = gql`
     type Query {
@@ -14,7 +13,6 @@ const baseSchema = gql`
 export const querySchema = groupSchema(
     { typeDef: baseSchema },
     feature,
-    features,
-    repositories,
-    repository
+    repository,
+    jira
 );
