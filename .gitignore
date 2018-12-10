@@ -8,3 +8,4 @@ server/ormconfig.*.json
 *.cer
 .env
 pg-data
+*.log

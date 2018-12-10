@@ -140,8 +140,8 @@ export const fetch = R.pipeP(
             callbacks: {
                 credentials() {
                     return git.Cred.userpassPlaintextNew(
-                        process.env.REMOTE_USER as string,
-                        process.env.REMOTE_PASS as string
+                        process.env.GIT_USER as string,
+                        process.env.GIT_PASS as string
                     );
                 }
             }
