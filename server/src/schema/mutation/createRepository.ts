@@ -9,10 +9,10 @@ export interface CreateRepositoryArgs {
 const createRepository: Resolver<{}, CreateRepositoryArgs> = async (
     _,
     { name, path },
-    { connection, model }
+    { model }
 ) => {
     return model.repository
-        .createRepository(connection, { name, path })
+        .createRepository({ name, path })
         .then(() => ({
             success: true
         }))

@@ -1,14 +1,13 @@
-import * as model from "../../../model";
-import { gql, IFieldResolver } from "apollo-server";
+import { gql } from "apollo-server";
 import { groupSchema } from "../../group-schema";
 import { commits } from "./commits";
 import { currentBranch } from "./currentBranch";
 import { latestCommit } from "./latestCommit";
 import { latestRelease } from "./latestRelease";
-import { Ctx } from "../../..";
 import { branches } from "./branches";
+import { Resolver } from "../../resolver";
 
-export const _repository: IFieldResolver<{}, Ctx, { id: number }> = (
+export const _repository: Resolver<{}, { id: number }> = (
     _,
     { id },
     { model }
@@ -16,7 +15,7 @@ export const _repository: IFieldResolver<{}, Ctx, { id: number }> = (
     return model.repository.getRepository({ id });
 };
 
-const _repositories: IFieldResolver<{}, Ctx> = async (_, __, { model }) => {
+const _repositories: Resolver = async (_, __, { model }) => {
     return model.repository.getRepositories();
 };
 
