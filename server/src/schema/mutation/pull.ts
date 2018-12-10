@@ -4,9 +4,9 @@ import { Resolver } from "../resolver";
 const pull: Resolver<{}, { id: number; branch: string }> = async (
     _,
     { id, branch },
-    { connection, model }
+    { model }
 ) => {
-    const repository = await model.repository.getRepository(connection, { id });
+    const repository = await model.repository.getRepository({ id });
 
     if (!repository) {
         return {

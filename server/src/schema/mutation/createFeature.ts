@@ -17,9 +17,9 @@ export interface CreateFeatureArgs<T = number> {
 const createFeature: Resolver<{}, CreateFeatureArgs> = async (
     _,
     { name, issueCode, featureBranches },
-    { connection, model }
+    { model }
 ) => {
-    const repositories = await model.repository.getRepositories(connection, {
+    const repositories = await model.repository.getRepositories({
         where: {
             id: In(featureBranches.map(R.prop("repository")))
         }

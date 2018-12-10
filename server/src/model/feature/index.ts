@@ -3,7 +3,7 @@ import { Feature, FeatureBranch } from "../../entities";
 import { CreateFeatureArgs } from "../../schema/mutation/createFeature";
 import { Repository } from "../../entities/Repository";
 
-export const createFeature = async ({
+const createFeature = async ({
     name,
     issueCode,
     featureBranches
@@ -23,17 +23,24 @@ export const createFeature = async ({
     });
 };
 
-export const getAllFeatures = async (connection: Connection) => {
+const getAllFeatures = (connection: Connection) => async () => {
     const repository = await connection.getRepository(Feature);
 
     return repository.find();
 };
 
-export const getFeature = async (
-    connection: Connection,
-    { id }: { id: number }
-) => {
+const getFeature = (connection: Connection) => async ({
+    id
+}: {
+    id: number;
+}) => {
     const repository = await connection.getRepository(Feature);
 
     return repository.findOne({ id });
 };
+
+export const feature = (connection: Connection) => ({
+    getFeature: getFeature(connection),
+    getAllFeatures: getAllFeatures(connection),
+    createFeature
+});

@@ -2,8 +2,8 @@ import { gql } from "apollo-server";
 import { SchemaSection } from "../../group-schema";
 import { Resolver } from "../../resolver";
 
-const _features: Resolver = (_, __, { connection, model }) => {
-    return model.feature.getAllFeatures(connection);
+const _features: Resolver = (_, __, { model }) => {
+    return model.feature.getAllFeatures();
 };
 
 const typeDef = gql`

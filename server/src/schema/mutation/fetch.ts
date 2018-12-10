@@ -1,12 +1,8 @@
 import { gql } from "apollo-server";
 import { Resolver } from "../resolver";
 
-const fetch: Resolver<{}, { id: number }> = async (
-    _,
-    { id },
-    { connection, model }
-) => {
-    const repository = await model.repository.getRepository(connection, { id });
+const fetch: Resolver<{}, { id: number }> = async (_, { id }, { model }) => {
+    const repository = await model.repository.getRepository({ id });
 
     if (!repository) {
         return {

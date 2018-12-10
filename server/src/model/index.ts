@@ -1,9 +1,12 @@
 import * as git from "./git";
-import * as feature from "./feature";
+import { feature } from "./feature";
 import * as jira from "./jira";
-import * as repository from "./repository";
+import { repository } from "./repository";
+import { Connection } from "typeorm";
 
-export { git };
-export { feature };
-export { jira };
-export { repository };
+export const model = (connection: Connection) => ({
+    git,
+    feature: feature(connection),
+    jira,
+    repository: repository(connection)
+});

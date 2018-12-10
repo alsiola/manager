@@ -6,8 +6,8 @@ import { Resolver } from "../resolver";
 const checkoutBranches: Resolver<
     {},
     { branches: Array<{ id: number; branch: string }> }
-> = async (_, { branches }, { connection, model }) => {
-    const repositories = await model.repository.getRepositories(connection, {
+> = async (_, { branches }, { model }) => {
+    const repositories = await model.repository.getRepositories({
         where: {
             id: In(branches.map(R.prop("id")))
         }

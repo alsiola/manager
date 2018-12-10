@@ -11,17 +11,13 @@ import { branches } from "./branches";
 export const _repository: IFieldResolver<{}, Ctx, { id: number }> = (
     _,
     { id },
-    { connection }
+    { model }
 ) => {
-    return model.repository.getRepository(connection, { id });
+    return model.repository.getRepository({ id });
 };
 
-const _repositories: IFieldResolver<{}, Ctx> = async (
-    _,
-    __,
-    { connection }
-) => {
-    return model.repository.getRepositories(connection);
+const _repositories: IFieldResolver<{}, Ctx> = async (_, __, { model }) => {
+    return model.repository.getRepositories();
 };
 
 export const typeDef = gql`
