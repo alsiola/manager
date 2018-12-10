@@ -1,4 +1,3 @@
-import * as model from "../../model";
 import { gql } from "apollo-server";
 import { In } from "typeorm";
 import R from "ramda";
@@ -18,7 +17,7 @@ export interface CreateFeatureArgs<T = number> {
 const createFeature: Resolver<{}, CreateFeatureArgs> = async (
     _,
     { name, issueCode, featureBranches },
-    { connection }
+    { connection, model }
 ) => {
     const repositories = await model.repository.getRepositories(connection, {
         where: {

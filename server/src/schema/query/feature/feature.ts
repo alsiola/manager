@@ -1,9 +1,12 @@
-import * as model from "../../../model";
 import { gql } from "apollo-server";
 import { SchemaSection } from "../../group-schema";
 import { Resolver } from "../../resolver";
 
-const _feature: Resolver<{}, { id: number }> = (_, { id }, { connection }) => {
+const _feature: Resolver<{}, { id: number }> = (
+    _,
+    { id },
+    { connection, model }
+) => {
     return model.feature.getFeature(connection, { id });
 };
 

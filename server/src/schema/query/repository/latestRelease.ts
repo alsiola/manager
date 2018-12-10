@@ -1,11 +1,10 @@
-import { git } from "../../../model";
 import { Repository } from "../../../entities/Repository";
 import { Resolver } from "../../resolver";
 import { gql } from "apollo-server";
 import { SchemaSection } from "../../group-schema";
 
-const _latestRelease: Resolver<Repository> = ({ path }) => {
-    return git.getLatestRelease(path);
+const _latestRelease: Resolver<Repository> = ({ path }, args, { model }) => {
+    return model.git.getLatestRelease(path);
 };
 
 export const typeDef = gql`

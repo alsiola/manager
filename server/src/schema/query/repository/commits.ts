@@ -1,4 +1,3 @@
-import * as model from "../../../model";
 import { Repository } from "../../../entities/Repository";
 import { Resolver } from "../../resolver";
 import { gql } from "apollo-server";
@@ -6,7 +5,8 @@ import { SchemaSection } from "../../group-schema";
 
 const _commits: Resolver<Repository, { count: number }> = (
     { path },
-    { count }
+    { count },
+    { model }
 ) => {
     return model.git.getBranchHistory({ count, path });
 };

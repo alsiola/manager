@@ -1,11 +1,10 @@
-import * as model from "../../model";
 import { gql } from "apollo-server";
 import { Resolver } from "../resolver";
 
 const checkoutBranch: Resolver<{}, { id: number; branch: string }> = async (
     _,
     { id, branch },
-    { connection }
+    { connection, model }
 ) => {
     const repository = await model.repository.getRepository(connection, {
         id

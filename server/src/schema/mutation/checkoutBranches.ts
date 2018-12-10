@@ -1,4 +1,3 @@
-import * as model from "../../model";
 import { gql } from "apollo-server";
 import { In } from "typeorm";
 import R from "ramda";
@@ -7,7 +6,7 @@ import { Resolver } from "../resolver";
 const checkoutBranches: Resolver<
     {},
     { branches: Array<{ id: number; branch: string }> }
-> = async (_, { branches }, { connection }) => {
+> = async (_, { branches }, { connection, model }) => {
     const repositories = await model.repository.getRepositories(connection, {
         where: {
             id: In(branches.map(R.prop("id")))

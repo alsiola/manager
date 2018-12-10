@@ -1,4 +1,3 @@
-import * as model from "../../model";
 import { gql } from "apollo-server";
 import { Resolver } from "../resolver";
 
@@ -10,7 +9,7 @@ export interface CreateRepositoryArgs {
 const createRepository: Resolver<{}, CreateRepositoryArgs> = async (
     _,
     { name, path },
-    { connection }
+    { connection, model }
 ) => {
     return model.repository
         .createRepository(connection, { name, path })
